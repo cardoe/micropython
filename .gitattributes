@@ -15,6 +15,7 @@
 tests/basics/string_cr_conversion.py -text
 tests/basics/string_crlf_conversion.py -text
 stmhal/startup_stm32f40xx.s -text
+stmhal/startup_stm32l152xe.s -text
 stmhal/pybcdc.inf_template -text
 stmhal/usbd_* -text
 stmhal/boards/*/stm32f4xx_hal_conf.h -text
