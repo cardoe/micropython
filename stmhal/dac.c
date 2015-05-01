@@ -28,7 +28,8 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "stm32f4xx_hal.h"
+//#include "stm32f4xx_hal.h"
+#include "stm32l1xx_hal.h"
 
 #include "py/nlr.h"
 #include "py/runtime.h"

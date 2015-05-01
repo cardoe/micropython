@@ -198,7 +198,10 @@ def main():
         'WWDG',
         'RNG',
         ):
-        print_regs(reg, reg_defs[reg], needed_qstrs)
+        try:
+            print_regs(reg, reg_defs[reg], needed_qstrs)
+        except KeyError:
+            print("// {} was not found.".format(reg))
         #print_regs_as_submodules(reg, reg_defs[reg], modules, needed_qstrs)
 
     #print("#define MOD_STM_CONST_MODULES \\")

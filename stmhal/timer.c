@@ -28,7 +28,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <stm32f4xx_hal.h>
+//#include <stm32f4xx_hal.h>
+#include <stm32l1xx_hal.h>
 #include "usbd_cdc_msc_hid.h"
 #include "usbd_cdc_interface.h"
 
@@ -459,6 +460,7 @@ STATIC mp_int_t compute_ticks_from_dtg(uint32_t dtg) {
 }
 
 STATIC void config_deadtime(pyb_timer_obj_t *self, mp_int_t ticks) {
+    /*
     TIM_BreakDeadTimeConfigTypeDef deadTimeConfig;
     deadTimeConfig.OffStateRunMode  = TIM_OSSR_DISABLE;
     deadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
@@ -468,6 +470,7 @@ STATIC void config_deadtime(pyb_timer_obj_t *self, mp_int_t ticks) {
     deadTimeConfig.BreakPolarity    = TIM_BREAKPOLARITY_LOW;
     deadTimeConfig.AutomaticOutput  = TIM_AUTOMATICOUTPUT_DISABLE;
     HAL_TIMEx_ConfigBreakDeadTime(&self->tim, &deadTimeConfig);
+    */
 }
 
 STATIC void pyb_timer_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
@@ -584,7 +587,9 @@ STATIC mp_obj_t pyb_timer_init_helper(pyb_timer_obj_t *self, mp_uint_t n_args, c
 
     // enable TIM clock
     switch (self->tim_id) {
+        #if defined(TIM1)
         case 1: __TIM1_CLK_ENABLE(); break;
+        #endif
         case 2: __TIM2_CLK_ENABLE(); break;
         case 3: __TIM3_CLK_ENABLE(); break;
         case 4: __TIM4_CLK_ENABLE(); break;
@@ -652,7 +657,9 @@ STATIC mp_obj_t pyb_timer_make_new(mp_obj_t type_in, mp_uint_t n_args, mp_uint_t
     tim->is_32bit = false;
 
     switch (tim->tim_id) {
+        #if defined(TIM1)
         case 1: tim->tim.Instance = TIM1; tim->irqn = TIM1_UP_TIM10_IRQn; break;
+        #endif
         case 2: tim->tim.Instance = TIM2; tim->irqn = TIM2_IRQn; tim->is_32bit = true; break;
         case 3: nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Timer 3 is for internal use only")); // TIM3 used for low-level stuff; go via regs if necessary
         case 4: tim->tim.Instance = TIM4; tim->irqn = TIM4_IRQn; break;
@@ -1007,8 +1014,10 @@ STATIC mp_obj_t pyb_timer_channel(mp_uint_t n_args, const mp_obj_t *pos_args, mp
                 nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_ValueError, "invalid polarity (%d)", enc_config.IC1Polarity));
             }
             // Only Timers 1, 2, 3, 4, 5, and 8 support encoder mode
-            if (self->tim.Instance != TIM1
-            &&  self->tim.Instance != TIM2
+            if (self->tim.Instance != TIM2
+            #if defined(TIM1)
+            &&  self->tim.Instance != TIM1
+            #endif
             &&  self->tim.Instance != TIM3
             &&  self->tim.Instance != TIM4
             &&  self->tim.Instance != TIM5

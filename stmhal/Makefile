@@ -42,8 +42,9 @@ INC += -I$(USBDEV_DIR)/core/inc -I$(USBDEV_DIR)/class/inc
 #INC += -I$(USBHOST_DIR)
 INC += -I../lib/mp-readline
 
+CFLAGS_CORTEX_M3 = -mthumb -mtune=cortex-m3 -mabi=aapcs-linux -mcpu=cortex-m3
 CFLAGS_CORTEX_M4 = -mthumb -mtune=cortex-m4 -mabi=aapcs-linux -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -fsingle-precision-constant -Wdouble-promotion
-CFLAGS = $(INC) -Wall -Wpointer-arith -Werror -ansi -std=gnu99 -nostdlib $(CFLAGS_MOD) $(CFLAGS_CORTEX_M4) $(COPT)
+CFLAGS = $(INC) -Wall -Wpointer-arith -Werror -ansi -std=gnu99 -nostdlib $(CFLAGS_MOD) $(CFLAGS_CORTEX_M3) $(COPT)
 CFLAGS += -Iboards/$(BOARD)
 
 LDFLAGS = -nostdlib -T $(LD_FILE) -Map=$(@:.elf=.map) --cref
@@ -62,9 +63,9 @@ endif
 # uncomment this if you want libgcc
 #LIBS += $(shell $(CC) -print-libgcc-file-name)
 
+#	libm/math.c \
 SRC_LIB = $(addprefix lib/,\
 	libc/string0.c \
-	libm/math.c \
 	libm/asinfacosf.c \
 	libm/atanf.c \
 	libm/atan2f.c \
@@ -94,14 +95,15 @@ SRC_LIB = $(addprefix lib/,\
 	mp-readline/readline.c \
 	)
 
+#	usbd_conf.c \
+#	usbd_desc.c \
+#	usbd_cdc_interface.c \
+#	usbd_msc_storage.c \
+
 SRC_C = \
 	main.c \
-	system_stm32f4xx.c \
+	system_stm32l1xx.c \
 	stm32f4xx_it.c \
-	usbd_conf.c \
-	usbd_desc.c \
-	usbd_cdc_interface.c \
-	usbd_msc_storage.c \
 	mphal.c \
 	irq.c \
 	pendsv.c \
@@ -150,10 +152,10 @@ SRC_C = \
 	adc.c \
 
 SRC_S = \
-	startup_stm32f40xx.s \
+	startup_stm32l152xe.s \
 	gchelper.s \
 
-SRC_HAL = $(addprefix $(HAL_DIR)/src/,\
+SRC_HAL_F4 = $(addprefix $(HAL_DIR)/src/,\
 	stm32f4xx_hal.c \
 	stm32f4xx_hal_adc.c \
 	stm32f4xx_hal_adc_ex.c \
@@ -182,6 +184,34 @@ SRC_HAL = $(addprefix $(HAL_DIR)/src/,\
 	stm32f4xx_hal_uart.c \
 	stm32f4xx_ll_sdmmc.c \
 	stm32f4xx_ll_usb.c \
+	)
+
+SRC_HAL_L1 = $(addprefix $(HAL_DIR)/src/,\
+	stm32l1xx_hal.c \
+	stm32l1xx_hal_adc.c \
+	stm32l1xx_hal_adc_ex.c \
+	stm32l1xx_hal_cortex.c \
+	stm32l1xx_hal_dac.c \
+	stm32l1xx_hal_dac_ex.c \
+	stm32l1xx_hal_dma.c \
+	stm32l1xx_hal_flash.c \
+	stm32l1xx_hal_flash_ex.c \
+	stm32l1xx_hal_gpio.c \
+	stm32l1xx_hal_i2c.c \
+	stm32l1xx_hal_pcd.c \
+	stm32l1xx_hal_pcd_ex.c \
+	stm32l1xx_hal_pwr.c \
+	stm32l1xx_hal_pwr_ex.c \
+	stm32l1xx_hal_rcc.c \
+	stm32l1xx_hal_rcc_ex.c \
+	stm32l1xx_hal_rtc.c \
+	stm32l1xx_hal_rtc_ex.c \
+	stm32l1xx_hal_sd.c \
+	stm32l1xx_hal_spi.c \
+	stm32l1xx_hal_tim.c \
+	stm32l1xx_hal_tim_ex.c \
+	stm32l1xx_hal_uart.c \
+	stm32l1xx_ll_sdmmc.c \
 	)
 
 SRC_USBDEV = $(addprefix $(USBDEV_DIR)/,\
@@ -235,8 +265,8 @@ OBJ += $(PY_O)
 OBJ += $(addprefix $(BUILD)/, $(SRC_LIB:.c=.o))
 OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 OBJ += $(addprefix $(BUILD)/, $(SRC_S:.s=.o))
-OBJ += $(addprefix $(BUILD)/, $(SRC_HAL:.c=.o))
-OBJ += $(addprefix $(BUILD)/, $(SRC_USBDEV:.c=.o))
+OBJ += $(addprefix $(BUILD)/, $(SRC_HAL_L1:.c=.o))
+#OBJ += $(addprefix $(BUILD)/, $(SRC_USBDEV:.c=.o))
 OBJ += $(addprefix $(BUILD)/, $(SRC_MOD:.c=.o))
 OBJ += $(BUILD)/pins_$(BOARD).o
 
@@ -245,7 +275,7 @@ OBJ += $(BUILD)/pins_$(BOARD).o
 # to be compiled with -O0, then edit stm32f405.ld (in the .isr_vector section)
 # and comment out the following 2 lines.
 $(BUILD)/$(FATFS_DIR)/ff.o: COPT += -Os
-$(BUILD)/$(HAL_DIR)/src/stm32f4xx_hal_sd.o: COPT += -Os
+$(BUILD)/$(HAL_DIR)/src/stm32l1xx_hal_sd.o: COPT += -Os
 
 all: $(BUILD)/firmware.dfu $(BUILD)/firmware.hex
 

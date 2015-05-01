@@ -30,7 +30,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "stm32f4xx_hal.h"
+//#include "stm32f4xx_hal.h"
+#include "stm32l1xx_hal.h"
 
 #include "py/runtime.h"
 #include "lib/fatfs/ff.h"        /* FatFs lower layer API */

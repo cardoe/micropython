@@ -26,7 +26,8 @@
 
 // TODO make it work with DMA
 
-#include <stm32f4xx_hal.h>
+//#include <stm32f4xx_hal.h>
+#include <stm32l1xx_hal.h>
 
 #include "py/nlr.h"
 #include "py/runtime.h"

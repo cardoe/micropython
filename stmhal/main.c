@@ -269,7 +269,7 @@ int main(void) {
     __GPIOD_CLK_ENABLE();
 
     // enable the CCM RAM
-    __CCMDATARAMEN_CLK_ENABLE();
+    //__CCMDATARAMEN_CLK_ENABLE();
 
 #if 0
 #if defined(NETDUINO_PLUS_2)

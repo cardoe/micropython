@@ -68,7 +68,7 @@
 #include <stdio.h>
 
 #include "stm32f4xx_it.h"
-#include "stm32f4xx_hal.h"
+#include "stm32l1xx_hal.h"
 
 #include "py/obj.h"
 #include "pendsv.h"
@@ -413,9 +413,11 @@ void UART4_IRQHandler(void) {
     uart_irq_handler(4);
 }
 
+#ifdef USART6
 void USART6_IRQHandler(void) {
     uart_irq_handler(6);
 }
+#endif // USART6
 
 #if MICROPY_HW_ENABLE_CAN
 void CAN1_RX0_IRQHandler(void) {

@@ -24,7 +24,8 @@
  * THE SOFTWARE.
  */
 
-#include <stm32f4xx_hal.h>
+//#include <stm32f4xx_hal.h>
+#include <stm32l1xx_hal.h>
 
 #include "flash.h"
 
